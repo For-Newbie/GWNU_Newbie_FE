@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>회원가입</title>
+    <link rel="stylesheet" href="../../css/loginstyle.css">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="icon" type="images/png" href="../../images/logo2.png">
+</head>
+<body>
+    
+
+    <div class="wrapper">
+
+        <form action="/html/user/signup" method="post">
+            <h1>회원가입</h1>
+            <div class="input-box">
+                <input type="ID" placeholder="ID"
+                       required>
+                <i class='bx bxs-user'></i>
+            </div>
+            <div class="input-box">
+                <input type="password" placeholder="비밀번호"
+                       required>
+                <i class='bx bxs-lock-alt'></i>
+            </div>
+            <div class="input-box">
+                <input type="password" placeholder="비밀번호 확인"
+                required>
+                <i class='bx bxs-lock-alt' ></i>
+            </div>
+            <div class="input-box">
+                <input type="text" placeholder="이름"
+                       required>
+                <i class='bx bx-happy-beaming'></i>
+            </div>
+            <div class="input-box">
+                <input type="text" placeholder="닉네임"
+                       required>
+                <i class='bx bx-happy-beaming'></i>
+            </div>
+            
+            <button type="submit" class="btn" onclick="redirectToAnotherPage()">회원가입</button>
+        </form>
+    </div>
+    <script>
+        function redirectToAnotherPage() {
+            var nextPageUrl = "login.html";
+            window.location.href = nextPageUrl;
+        }
+    </script>
+</body>
+</html>

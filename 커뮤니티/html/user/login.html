@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>로그인</title>
+    <link rel="stylesheet" href="../../css/loginstyle.css">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="icon" type="images/png" href="../../images/logo2.png">
+</head>
+<body>
+    
+    
+    <div class="wrapper">
+
+        <form action="/html/user/login" method="post">
+            <h1>로그인</h1>
+            <div class="input-box">
+                <input type="ID" placeholder="ID"
+                required>
+                <i class='bx bxs-user'></i>
+            </div>
+            <div class="input-box">
+                <input type="password" placeholder="Password"
+                required>
+                <i class='bx bxs-lock-alt' ></i>
+            </div>
+
+            <button type="submit" class="btn" onclick="redirectToAnotherPage()">로그인</button>
+
+            <div class="register-link">
+                <p>아직 계정이 없으신가요? <a href="signup.html">회원가입</a></p>
+            </div>
+        </form>
+    </div>
+    <script>
+        function redirectToAnotherPage() {
+            var nextPageUrl = "../../index.html";
+            window.location.href = nextPageUrl;
+        }
+    </script>
+</body>
+</html>
