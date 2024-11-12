@@ -66,6 +66,18 @@
             background-color: #2076d3;
             color: white;
         }
+        /* 그리드 레이아웃 설정 */
+        #slides {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr); /* 3개의 칸으로 설정 */
+            gap: 10px; /* 이미지 간의 간격 설정 */
+        }
+
+        /* 이미지 크기 조정 */
+        #slides img {
+            width: 100%;  /* 그리드 셀에 맞게 이미지의 너비를 100%로 설정 */
+            height: auto; /* 이미지 비율 유지 */
+        }
     </style>
 </head>
 <body>
@@ -105,6 +117,7 @@
                 <i class="fa fa-caret-down"></i>
             </button>
             <div class="dropdown-content">
+                
                 <a href="html/Tagthebills.html">Tag the bills</a>
                 <a href="html/보드홀릭.html">보드홀릭</a>
                 <a href="html/팔레트.html">팔레트</a>
@@ -134,9 +147,27 @@
                 
             </div>
         </div>
-        
+        <!-- 학과동아리 -->
+        <div class="dropdown">
+            <button class="dropbtn">학과동아리 
+                <i class="fa fa-caret-down"></i>
+            </button>
+            <div class="dropdown-content">
+                <a href="html/Ghost.html">Ghost</a>
+                
+            </div>
         </div>
+        
     </div>
-   
+    <script>
+        fetch("http://34.64.149.111:8080/clubs")
+      .then(response => response.json())
+      .then(data => {
+        console.log(data); // 받은 클럽 목록 데이터를 확인하고, 이를 화면에 렌더링
+      })
+      .catch(error => {
+        console.error("Error fetching club data:", error);
+      });
+    </script>
 </body>
 </html>
