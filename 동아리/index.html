@@ -157,8 +157,17 @@
                 
             </div>
         </div>
-        
     </div>
+    <template id="post-template">
+        <div class="post-item">
+            <div class="post-title"></div>
+            <div class="post-content"></div>
+            <div class="post-meta">
+                <span class="psrt-author"></span>
+                <span class="post-data"></span>
+            </div>
+        </div>
+    </template>
     <script>
         fetch("http://34.64.149.111:8080/clubs")
       .then(response => response.json())
@@ -168,6 +177,22 @@
       .catch(error => {
         console.error("Error fetching club data:", error);
       });
+      createPostElement(post){
+                // 템플릿 복제
+                const postElement = this.template.content.cloneNode(true);
+                
+                // 데이터 바인딩
+                postElement.querySelector('.post-title').textContent = post.title;
+                postElement.querySelector('.post-content').textContent = post.content;
+                postElement.querySelector('.post-author').textContent = post.author;
+                postElement.querySelector('.post-date').textContent = new Date(post.date).toLocaleDateString();
+
+                // 이벤트 리스너 추가
+                const postItem = postElement.querySelector('.post-item');
+                postItem.addEventListener('click', () => this.onPostClick(post));
+
+                return postElement;
+    }
     </script>
 </body>
 </html>
