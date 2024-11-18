@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="utf-8" />
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
+    <!-- Tippy.js CDN -->
+    <script src="https://unpkg.com/@popperjs/core@2"></script>
+    <script src="https://unpkg.com/tippy.js@6"></script>
+    <link rel="stylesheet" href="https://unpkg.com/tippy.js@6/dist/tippy.css" />
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var calendarEl1 = document.getElementById("calendar1");
+            var calendarEl2 = document.getElementById("calendar2");
+
+            // Function to fetch events from the backend
+            function fetchEvents(url) {
+                return fetch(url)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error("네트워크 응답에 문제가 있습니다.");
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        // 서버에서 받은 데이터 변환
+                        return data.body.map(event => ({
+                            title: event.eventName,
+                            start: event.startDate + "T" + event.startTime,
+                            end: event.endDate + "T" + event.endTime,
+                            extendedProps: {
+                                description: event.eventName,
+                                startDate: event.startDate,
+                                endDate: event.endDate,
+                                startTime: event.startTime,
+                                endTime: event.endTime
+                            }
+                        }));
+                    })
+                    .catch(error => {
+                        console.error("이벤트 데이터를 가져오는 중 오류:", error);
+                        return [];
+                    });
+            }
+
+            function formatDate(date) {
+                return date.replace(/-/g, '.');
+            }
+
+            function formatTime(time) {
+                if (!time) return '';
+                return time.substring(0, 5); // HH:mm 형식으로 변환
+            }
+
+            var calendarConfig = {
+                initialView: "dayGridMonth",
+                locale: "ko",
+                headerToolbar: {
+                    left: "prev,next today",
+                    center: "title",
+                    right: "dayGridMonth,timeGridWeek,timeGridDay",
+                },
+                eventDidMount: function (info) {
+                    // 툴팁 내용 구성
+                    const startDate = formatDate(info.event.extendedProps.startDate);
+                    const endDate = formatDate(info.event.extendedProps.endDate);
+                    const startTime = formatTime(info.event.extendedProps.startTime);
+                    const endTime = formatTime(info.event.extendedProps.endTime);
+
+                    let dateTimeStr = startDate;
+                    if (startDate !== endDate) {
+                        dateTimeStr += ` ~ ${endDate}`;
+                    }
+                    if (startTime && endTime) {
+                        dateTimeStr += `<br>${startTime} ~ ${endTime}`;
+                    }
+
+                    const tooltipContent = `
+                        <div class="tooltip-content">
+                            <div class="tooltip-title">${info.event.title}</div>
+                            <div class="tooltip-date">${dateTimeStr}</div>
+                        </div>
+                    `;
+
+                    // Tippy.js 툴팁 적용
+                    tippy(info.el, {
+                        content: tooltipContent,
+                        allowHTML: true,
+                        placement: 'top',
+                        animation: 'scale',
+                        duration: [200, 100],
+                        interactive: true,
+                        theme: 'custom'
+                    });
+                },
+                dayCellDidMount: function (info) {
+                    var day = info.date.getDay();
+                    if (day === 0) {
+                        info.el.style.color = "red";
+                    } else if (day === 6) {
+                        info.el.style.color = "blue";
+                    }
+                },
+            };
+
+            var calendar1 = new FullCalendar.Calendar(calendarEl1, {
+                ...calendarConfig,
+                events: function (fetchInfo, successCallback, failureCallback) {
+                    fetchEvents("http://34.64.149.111:8080/schedules")
+                        .then(data => successCallback(data))
+                        .catch(error => failureCallback(error));
+                }
+            });
+
+            var calendar2 = new FullCalendar.Calendar(calendarEl2, {
+                ...calendarConfig,
+                events: function (fetchInfo, successCallback, failureCallback) {
+                    fetchEvents("http://34.64.149.111:8080/schedules/%ED%96%89%EC%82%AC")
+                        .then(data => successCallback(data))
+                        .catch(error => failureCallback(error));
+                }
+            });
+
+            calendar1.render();
+            calendar2.render();
+
+            document.getElementById("common").addEventListener("click", function () {
+                calendarEl1.style.display = "block";
+                calendarEl2.style.display = "none";
+                calendar1.updateSize();
+            });
+
+            document.getElementById("major").addEventListener("click", function () {
+                calendarEl1.style.display = "none";
+                calendarEl2.style.display = "block";
+                calendar2.updateSize();
+            });
+
+            calendarEl1.style.display = "block";
+            calendarEl2.style.display = "none";
+        });
+    </script>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f7f7f7;
+            font-family: 'Arial', sans-serif;
+        }
+
+        h1 {
+            text-align: center;
+            margin: 20px 0;
+            color: #333;
+            font-weight: bold;
+        }
+
+        .calendar-container {
+            width: 80%;
+            max-width: 1000px;
+            margin: 20px auto;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+
+        .button-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        button {
+            margin: 0 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            border-radius: 20px;
+            background-color: #007bff;
+            color: white;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .fc-event {
+            cursor: pointer;
+        }
+
+        /* 커스텀 툴팁 스타일 */
+        .tippy-box[data-theme~='custom'] {
+            background-color: white;
+            color: #333;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            padding: 8px;
+            font-size: 14px;
+            max-width: 300px !important;
+        }
+
+        .tippy-box[data-theme~='custom'][data-placement^='top']>.tippy-arrow::before {
+            border-top-color: white;
+        }
+
+        .tooltip-content {
+            padding: 8px;
+        }
+
+        .tooltip-title {
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #007bff;
+            font-size: 15px;
+        }
+
+        .tooltip-date {
+            color: #666;
+            line-height: 1.4;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>
+        <img src="./schedule_image/GWNU-LOGO.png" alt="GWNU 로고"
+            style="width: 70px; height: auto; vertical-align: middle; margin-right: 20px;">
+        학사일정 캘린더
+    </h1>
+    <div class="button-container">
+        <button id="common">공통 일정</button>
+        <button id="major">학과 일정</button>
+    </div>
+    <div id="calendar1" class="calendar-container"></div>
+    <div id="calendar2" class="calendar-container"></div>
+</body>
+
+</html>
