@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html>
 
 <head>
     <meta charset="UTF-8">
@@ -39,17 +39,6 @@
             color: white;
         }
 
-        .btn-custom {
-            background-color: #007bff;
-            color: white;
-            border-radius: 20px;
-            margin-bottom: 20px;
-        }
-
-        .btn-custom:hover {
-            background-color: #0056b3;
-        }
-
         .modal-dialog {
             max-width: 1000px;
             margin: 200px auto;
@@ -73,190 +62,155 @@
                     <th>이수 정보</th>
                 </tr>
             </thead>
-            <tbody>
-                <tr>
-                    <td>2024</td>
-                    <td>컴퓨터공학과</td>
-                    <td>
-                        <!-- View Details Button -->
-                        <a href="#" class="btn btn-info btn-sm" data-toggle="modal" data-target="#modal1">정보 보기</a>
-                    </td>
-                </tr>
-                <tr>
-                    <td>2024</td>
-                    <td>기계공학과</td>
-                    <td>
-                        <!-- View Details Button -->
-                        <a href="#" class="btn btn-info btn-sm" data-toggle="modal" data-target="#modal2">정보 보기</a>
-                    </td>
-                </tr>
-                <tr>
-                    <td>2024</td>
-                    <td>멀티미디어공학과</td>
-                    <td>
-                        <!-- View Details Button -->
-                        <a href="#" class="btn btn-info btn-sm" data-toggle="modal" data-target="#modal3">정보 보기</a>
-                    </td>
-                </tr>
-                <tr>
-                    <td>2024</td>
-                    <td>자동차공학과</td>
-                    <td>
-                        <!-- View Details Button -->
-                        <a href="#" class="btn btn-info btn-sm" data-toggle="modal" data-target="#modal4">정보 보기</a>
-                    </td>
-                </tr>
-                <tr>
-                    <td>2024</td>
-                    <td>전기공학과</td>
-                    <td>
-                        <!-- View Details Button -->
-                        <a href="#" class="btn btn-info btn-sm" data-toggle="modal" data-target="#modal5">정보 보기</a>
-                    </td>
-                </tr>
-                <tr>
-                    <td>2024</td>
-                    <td>산업경영공학과</td>
-                    <td>
-                        <!-- View Details Button -->
-                        <a href="#" class="btn btn-info btn-sm" data-toggle="modal" data-target="#modal6">정보 보기</a>
-                    </td>
-                </tr>
-                <tr>
-                    <td>2024</td>
-                    <td>정보통신공학과</td>
-                    <td>
-                        <!-- View Details Button -->
-                        <a href="#" class="btn btn-info btn-sm" data-toggle="modal" data-target="#modal7">정보 보기</a>
-                    </td>
-                </tr>
+            <tbody id="graduateTableBody">
+                <!-- Data will be dynamically inserted here -->
             </tbody>
         </table>
     </div>
 
-    <!-- Modal for 컴퓨터공학과 -->
-    <div class="modal fade" id="modal1" tabindex="-1" role="dialog" aria-labelledby="modal1Label" aria-hidden="true">
+    <!-- Modal Template -->
+    <div class="modal fade" id="graduateModal" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="modal1Label">졸업이수기준 - 컴퓨터공학과</h5>
+                    <h5 class="modal-title">졸업이수기준</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
-                    <img src="../../image/컴퓨터24.png" alt="컴퓨터공학과 이미지" class="img-fluid">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>교양</h6>
+                            <table class="table table-bordered">
+                                <tr>
+                                    <th>기초교양</th>
+                                    <td id="basicLiberal"></td>
+                                </tr>
+                                <tr>
+                                    <th>균형교양</th>
+                                    <td id="balanceLiberal"></td>
+                                </tr>
+                                <tr>
+                                    <th>해람교양</th>
+                                    <td id="specialLiberal"></td>
+                                </tr>
+                                <tr>
+                                    <th>교양계</th>
+                                    <td id="liberalTotal"></td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>전공</h6>
+                            <table class="table table-bordered">
+                                <tr>
+                                    <th>전공기초</th>
+                                    <td id="basicMajor"></td>
+                                </tr>
+                                <tr>
+                                    <th>전공필수</th>
+                                    <td id="requireMajor"></td>
+                                </tr>
+                                <tr>
+                                    <th>전공선택</th>
+                                    <td id="selectMajor"></td>
+                                </tr>
+                                <tr>
+                                    <th>전공계</th>
+                                    <td id="majorTotal"></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <h6>총 이수학점</h6>
+                            <table class="table table-bordered">
+                                <tr>
+                                    <th>전체 이수학점</th>
+                                    <td id="totalCredits"></td>
+                                </tr>
+                                <tr>
+                                    <th>졸업 이수학점</th>
+                                    <td id="graduationCredits"></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Modal for 기계공학과 -->
-    <div class="modal fade" id="modal2" tabindex="-1" role="dialog" aria-labelledby="modal2Label" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modal2Label">졸업이수기준 - 기계공학과</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <img src="../../image/기계24.png" alt="기계공학과 이미지" class="img-fluid">
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal for 멀티미디어공학과 -->
-    <div class="modal fade" id="modal3" tabindex="-1" role="dialog" aria-labelledby="modal3Label" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modal3Label">졸업이수기준 - 멀티미디어공학과</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <img src="../../image/멀티미디어24.png" alt="멀티미디어공학과 이미지" class="img-fluid">
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal for 자동차공학과 -->
-    <div class="modal fade" id="modal4" tabindex="-1" role="dialog" aria-labelledby="modal4Label" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modal3Label">졸업이수기준 - 자동차공학과</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <img src="../../image/자동차24.png" alt="자동차공학과 이미지" class="img-fluid">
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal for 전기공학과 -->
-    <div class="modal fade" id="modal5" tabindex="-1" role="dialog" aria-labelledby="modal5Label" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modal3Label">졸업이수기준 - 전기공학과</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <img src="../../image/전기공학24.png" alt="전기공학과 이미지" class="img-fluid">
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal for 산업경영공학과 -->
-    <div class="modal fade" id="modal6" tabindex="-1" role="dialog" aria-labelledby="modal6Label" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modal3Label">졸업이수기준 - 산업경영공학과</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <img src="../../image/산업경영24.png" alt="산업경영공학과 이미지" class="img-fluid">
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal for 정보통신공학과 -->
-    <div class="modal fade" id="modal7" tabindex="-1" role="dialog" aria-labelledby="modal7Label" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modal3Label">졸업이수기준 - 정보통신공학과</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <img src="../../image/정보통신24.png" alt="정보통신공학과 이미지" class="img-fluid">
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Bootstrap JS (Optional) -->
+    <!-- Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Fetch all graduate requirements
+            fetch('http://34.64.149.111:8080/graduates')
+                .then(response => response.json())
+                .then(data => {
+                    const tableBody = document.getElementById('graduateTableBody');
+                    // body.graduateList에서 데이터 접근
+                    data.body.graduateList.forEach((graduate) => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${graduate.classOf}</td>
+                            <td>${graduate.major}</td>
+                            <td>
+                                <button class="btn btn-info btn-sm" onclick="showGraduateDetails('${graduate.major}', ${graduate.classOf})">
+                                    정보 보기
+                                </button>
+                            </td>
+                        `;
+                        tableBody.appendChild(row);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('데이터를 불러오는데 실패했습니다.');
+                });
+        });
+
+        function showGraduateDetails(major, classOf) {
+            fetch(`http://34.64.149.111:8080/graduates/search?major=${major}&classOf=${classOf}`)
+                .then(response => response.json())
+                .then(data => {
+                    // body에서 데이터 접근
+                    const graduate = data.body;
+
+                    // Update modal with fetched data
+                    document.querySelector('.modal-title').textContent = `졸업이수기준 - ${graduate.major}`;
+
+                    // Update Liberal Arts information
+                    document.getElementById('basicLiberal').textContent = graduate.liberalArts.basicLiberal;
+                    document.getElementById('balanceLiberal').textContent = graduate.liberalArts.balanceLiberal;
+                    document.getElementById('specialLiberal').textContent = graduate.liberalArts.specialLiberal;
+                    document.getElementById('liberalTotal').textContent = graduate.liberalArts.total;
+
+                    // Update Major information
+                    document.getElementById('basicMajor').textContent = graduate.majorSubjects.basicMajor;
+                    document.getElementById('requireMajor').textContent = graduate.majorSubjects.requireMajor;
+                    document.getElementById('selectMajor').textContent = graduate.majorSubjects.selectMajor;
+                    document.getElementById('majorTotal').textContent = graduate.majorSubjects.total;
+
+                    // Update total credits
+                    document.getElementById('totalCredits').textContent = graduate.totalCredits;
+                    document.getElementById('graduationCredits').textContent = graduate.graduationCredits;
+
+                    // Show the modal
+                    $('#graduateModal').modal('show');
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('상세 정보를 불러오는데 실패했습니다.');
+                });
+        }
+    </script>
 </body>
 
 </html>
