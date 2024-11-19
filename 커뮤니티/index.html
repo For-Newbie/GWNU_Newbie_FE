@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GWNU 게시판</title>
     <style>
+        /* 기존 스타일 유지 */
         #loginBtn {
             position: absolute;
             top: 20px;
@@ -111,9 +112,7 @@
 <body>
     <div id="container">
         <h1>GWNU 게시판</h1>
-        <!-- 로그인 버튼 -->
         <button id="loginBtn">로그인</button>
-        <!-- 게시판 선택 버튼 -->
         <div id="boardList">
             <h2>게시판 선택</h2>
             <button onclick="selectBoard('board1')">기숙사 게시판</button>
@@ -121,16 +120,10 @@
             <button onclick="selectBoard('board3')">수업 게시판</button>
             <button onclick="selectBoard('board4')">학과 게시판</button>
         </div>
-
-        <!-- 선택한 게시판의 게시물 리스트 -->
         <div id="postList" style="display: none;">
             <h2 id="boardTitle">게시물 리스트</h2>
-            <ul id="postItems">
-                <!-- 게시물이 여기에 동적으로 추가됩니다. -->
-            </ul>
+            <ul id="postItems"></ul>
         </div>
-
-        <!-- 게시물 작성 및 수정 폼 -->
         <div class="post-form" style="display: none;">
             <h2>새 게시물 작성</h2>
             <input type="hidden" id="editIndex" value="">
@@ -147,7 +140,13 @@
         loginBtn.addEventListener('click', function() {
             window.location.href = 'html/user/login.html'; // 로그인 페이지로 이동
         });
-        let currentBoard = ''; // 현재 선택된 게시판 ID
+        // Set up a default nickname in local storage if none exists
+        if (!localStorage.getItem("nickname")) {
+            localStorage.setItem("nickname", "TestUser"); // Example nickname
+        }
+        const userNickname = localStorage.getItem("nickname");
+
+        let currentBoard = ''; 
         const postItems = document.getElementById('postItems');
         const postTitle = document.getElementById('postTitle');
         const postContent = document.getElementById('postContent');
@@ -157,21 +156,18 @@
         const postListDiv = document.getElementById('postList');
         const postFormDiv = document.querySelector('.post-form');
 
-        // 게시판 선택 함수
         function selectBoard(boardId) {
             currentBoard = boardId;
-            document.getElementById('boardTitle').innerText =' 게시물 리스트';
+            document.getElementById('boardTitle').innerText = '게시물 리스트';
             postListDiv.style.display = 'block';
             postFormDiv.style.display = 'block';
-            renderPosts(); // 게시물 리스트 렌더링
+            renderPosts();
         }
 
-        // 로컬 스토리지에서 게시물 불러오기
         function getPosts() {
             return JSON.parse(localStorage.getItem(currentBoard)) || [];
         }
 
-        // 게시물 리스트 렌더링 함수
         function renderPosts() {
             const storedPosts = getPosts();
             postItems.innerHTML = '';
@@ -181,17 +177,14 @@
                     li.innerHTML = `
                         <strong>${post.title}</strong> <br> 
                         ${post.content} <br> 
-                        <small>${post.date}</small>
+                        <small>${post.date} - 작성자: ${post.nickname}</small>
                         <span class="edit" onclick="editPost(${index})">수정</span>
                         <span class="delete" onclick="deletePost(${index})">삭제</span>
-
-                        <!-- 댓글 리스트 -->
                         <div class="comments">
                             <h4>댓글</h4>
                             <ul id="commentList_${index}">
-                                ${post.comments.map(comment => `<li>${comment}</li>`).join('')}
+                                ${post.comments.map(comment => `<li>${comment.nickname}: ${comment.text}</li>`).join('')}
                             </ul>
-                            <!-- 댓글 입력 폼 -->
                             <div class="comment-form">
                                 <input type="text" id="commentInput_${index}" placeholder="댓글을 입력하세요">
                                 <button onclick="addComment(${index})">댓글 작성</button>
@@ -205,35 +198,27 @@
             }
         }
 
-        // 게시물 작성 버튼 클릭 시 호출
         addPostBtn.addEventListener('click', function() {
             const title = postTitle.value;
             const content = postContent.value;
-
             if (title && content) {
                 const storedPosts = getPosts();
                 storedPosts.push({
                     title: title,
                     content: content,
                     date: new Date().toLocaleDateString(),
+                    nickname: userNickname, 
                     comments: []
                 });
-
-                // 로컬 스토리지에 저장
                 localStorage.setItem(currentBoard, JSON.stringify(storedPosts));
-
-                // 입력 필드 초기화
                 postTitle.value = '';
                 postContent.value = '';
-
-                // 게시물 리스트 다시 렌더링
                 renderPosts();
             } else {
                 alert('제목과 내용을 입력하세요.');
             }
         });
 
-        // 게시물 삭제
         function deletePost(index) {
             const storedPosts = getPosts();
             if (confirm('정말 이 게시물을 삭제하시겠습니까?')) {
@@ -243,70 +228,58 @@
             }
         }
 
-        // 게시물 수정
         function editPost(index) {
             const storedPosts = getPosts();
             const post = storedPosts[index];
             postTitle.value = post.title;
             postContent.value = post.content;
             editIndexInput.value = index;
-
-            // 버튼 전환
             addPostBtn.style.display = 'none';
             updatePostBtn.style.display = 'block';
         }
 
-        // 게시물 수정 버튼 클릭 시 호출
         updatePostBtn.addEventListener('click', function() {
             const storedPosts = getPosts();
             const index = editIndexInput.value;
             const title = postTitle.value;
             const content = postContent.value;
-
             if (title && content) {
                 storedPosts[index] = {
                     title: title,
                     content: content,
                     date: new Date().toLocaleDateString(),
-                    comments: storedPosts[index].comments // 기존 댓글 유지
+                    nickname: userNickname, 
+                    comments: storedPosts[index].comments
                 };
-
-                // 로컬 스토리지에 저장
                 localStorage.setItem(currentBoard, JSON.stringify(storedPosts));
-
-                // 입력 필드 초기화
                 postTitle.value = '';
                 postContent.value = '';
                 editIndexInput.value = '';
-
-                // 버튼 전환
                 addPostBtn.style.display = 'block';
                 updatePostBtn.style.display = 'none';
-
-                // 게시물 리스트 다시 렌더링
                 renderPosts();
             } else {
                 alert('제목과 내용을 입력하세요.');
             }
         });
 
-        // 댓글 추가
         function addComment(postIndex) {
             const storedPosts = getPosts();
             const commentInput = document.getElementById(`commentInput_${postIndex}`);
             const commentText = commentInput.value;
-
             if (commentText) {
-                storedPosts[postIndex].comments.push(commentText);
+                storedPosts[postIndex].comments.push({
+                    text: commentText,
+                    nickname: userNickname
+                });
                 localStorage.setItem(currentBoard, JSON.stringify(storedPosts));
-                commentInput.value = ''; // 입력값 초기화
+                commentInput.value = ''; 
                 renderPosts();
             } else {
                 alert('댓글을 입력하세요.');
             }
         }
 
-        // 페이지 로드 시 기본 게시판 선택
         selectBoard('board1');
     </script>
 </body>
