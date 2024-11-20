@@ -1,250 +1,186 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Graduate List</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        var calendarEl1 = document.getElementById("calendar1");
+        var calendarEl2 = document.getElementById("calendar2");
+
+        // Function to fetch events from the backend
+        function fetchEvents(url) {
+          return fetch(url)
+            .then(response => {
+              if (!response.ok) {
+                throw new Error("네트워크 응답에 문제가 있습니다.");
+              }
+              return response.json();
+            })
+            .then(data => {
+              // 서버에서 받은 데이터 변환
+              return data.body.map(event => ({
+                title: event.eventName,
+                start: event.startDate + "T" + event.startTime,
+                end: event.endDate + "T" + event.endTime
+              }));
+            })
+            .catch(error => {
+              console.error("이벤트 데이터를 가져오는 중 오류:", error);
+              return []; // 오류가 발생할 경우 빈 배열 반환
+            });
+        }
+
+        var calendar1 = new FullCalendar.Calendar(calendarEl1, {
+          initialView: "dayGridMonth",
+          locale: "ko",
+          headerToolbar: {
+            left: "prev,next today",
+            center: "title",
+            right: "dayGridMonth,timeGridWeek,timeGridDay",
+          },
+          events: function(fetchInfo, successCallback, failureCallback) {
+            fetchEvents("http://34.64.149.111:8080/schedules") // 전체 일정 데이터 URL
+              .then(data => successCallback(data))
+              .catch(error => failureCallback(error));
+          },
+          dayCellDidMount: function (info) {
+            var day = info.date.getDay();
+            if (day === 0) {
+              info.el.style.color = "red";
+            } else if (day === 6) {
+              info.el.style.color = "blue";
+            }
+          },
+        });
+
+        var calendar2 = new FullCalendar.Calendar(calendarEl2, {
+          initialView: "dayGridMonth",
+          locale: "ko",
+          headerToolbar: {
+            left: "prev,next today",
+            center: "title",
+            right: "dayGridMonth,timeGridWeek,timeGridDay",
+          },
+
+          events: function(fetchInfo, successCallback, failureCallback) {
+            fetchEvents("http://34.64.149.111:8080/schedules/%ED%96%89%EC%82%AC") // 학과 일정 데이터 URL
+              .then(data => successCallback(data))
+              .catch(error => failureCallback(error));
+          },
+          
+          dayCellDidMount: function (info) {
+            var day = info.date.getDay();
+            if (day === 0) {
+              info.el.style.color = "red";
+            } else if (day === 6) {
+              info.el.style.color = "blue";
+            }
+          },
+        });
+
+        calendar1.render();
+        calendar2.render();
+
+        document.getElementById("common").addEventListener("click", function () {
+          calendarEl1.style.display = "block";
+          calendarEl2.style.display = "none";
+          calendar1.updateSize();
+        });
+
+        document.getElementById("major").addEventListener("click", function () {
+          calendarEl1.style.display = "none";
+          calendarEl2.style.display = "block";
+          calendar2.updateSize();
+        });
+
+        calendarEl1.style.display = "block";
+        calendarEl2.style.display = "none";
+      });
+    </script>
     <style>
-        body {
-            background-color: #f7f7f7;
-        }
-        .container {
-            margin-top: 50px;
-        }
-        h1 {
-            color: #333;
-            font-weight: bold;
-            margin-bottom: 30px;
-            text-align: center;
-        }
-        .table {
-            background-color: white;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        th, td {
-            text-align: center;
-        }
-        th {
-            background-color: #007bff;
-            color: white;
-        }
-        .btn-custom {
-            background-color: #007bff;
-            color: white;
-            border-radius: 20px;
-            margin-bottom: 20px;
-        }
-        .btn-custom:hover {
-            background-color: #0056b3;
-        }
-        .modal-dialog {
-            max-width: 1000px; 
-            margin: 200px auto;
-        }
+      body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        margin: 0;
+        background-color: #f7f7f7;
+        font-family: 'Roboto', sans-serif;
+        box-sizing: border-box;
+      }
+
+      h1 {
+        text-align: center;
+        color: #333;
+        font-weight: bold;
+        font-size: 3vw;
+        letter-spacing: 1px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      h1 img {
+        width: 5vw;
+        margin-right: 20px;
+      }
+
+      .calendar-container {
+        width: 65%;
+        max-height: 80%;
+        margin: 20px auto;
+        background-color: #ffffff;
+        border-radius: 15px; /* 더 둥글게 */
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15); /* 더 부드러운 그림자 */
+        padding: 40px;
+        transition: transform 0.3s; /* 부드러운 움직임 */
+        font-size: 1vw;
+      }
+
+      .calendar-container:hover {
+        transform: translateY(-10px); /* 호버 시 살짝 위로 */
+      }
+
+      .button-container {
+        text-align: center;
+      }
+
+      button {
+        margin: 2vh 5vw; 
+        padding: 2vh 2vw; 
+        font-size: 2vh; 
+        cursor: pointer;
+        border: none;
+        border-radius: 50px;
+        background-color: #007bff;
+        color: white;
+        transition: all 0.3s; /* 모든 변화에 부드러운 애니메이션 */
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      button:hover {
+        background-color: #0056b3;
+        transform: translateY(-3px); /* 호버 시 살짝 위로 */
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); /* 더 강한 그림자 */
+      }
+
+      button:focus {
+        outline: none;
+      }
     </style>
-</head>
-<body>
-    <div class="container">
-        <h1>
-            <img src="../../image/GWNU-LOGO.png" alt="GWNU 로고" 
-            style="width: 70px; height: auto; vertical-align: middle; margin-right: 20px; margin-left: 20px;">
-            GWNU 졸업이수
-        </h1>
-        
-        <table class="table table-hover">
-            <thead>
-                <tr>
-                    <th>입학 년도</th>
-                    <th>학과</th>
-                    <th>이수 정보</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>2024</td>
-                    <td>컴퓨터공학과</td>
-                    <td>
-                        <!-- View Details Button -->
-                        <a href="#" class="btn btn-info btn-sm" data-toggle="modal" data-target="#modal1">정보 보기</a>
-                    </td>
-                </tr>
-                <tr>
-                    <td>2024</td>
-                    <td>기계공학과</td>
-                    <td>
-                        <!-- View Details Button -->
-                        <a href="#" class="btn btn-info btn-sm" data-toggle="modal" data-target="#modal2">정보 보기</a>
-                    </td>
-                </tr>
-                <tr>
-                    <td>2024</td>
-                    <td>멀티미디어공학과</td>
-                    <td>
-                        <!-- View Details Button -->
-                        <a href="#" class="btn btn-info btn-sm" data-toggle="modal" data-target="#modal3">정보 보기</a>
-                    </td>
-                </tr>
-                <tr>
-                    <td>2024</td>
-                    <td>자동차공학과</td>
-                    <td>
-                        <!-- View Details Button -->
-                        <a href="#" class="btn btn-info btn-sm" data-toggle="modal" data-target="#modal4">정보 보기</a>
-                    </td>
-                </tr>
-                <tr>
-                    <td>2024</td>
-                    <td>전기공학과</td>
-                    <td>
-                        <!-- View Details Button -->
-                        <a href="#" class="btn btn-info btn-sm" data-toggle="modal" data-target="#modal5">정보 보기</a>
-                    </td>
-                </tr>
-                <tr>
-                    <td>2024</td>
-                    <td>산업경영공학과</td>
-                    <td>
-                        <!-- View Details Button -->
-                        <a href="#" class="btn btn-info btn-sm" data-toggle="modal" data-target="#modal6">정보 보기</a>
-                    </td>
-                </tr>
-                <tr>
-                    <td>2024</td>
-                    <td>정보통신공학과</td>
-                    <td>
-                        <!-- View Details Button -->
-                        <a href="#" class="btn btn-info btn-sm" data-toggle="modal" data-target="#modal7">정보 보기</a>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+  </head>
+  <body>
+    <h1> 
+      <img src="../../image/GWNU-LOGO.png" alt="GWNU 로고">
+      학사일정 캘린더
+    </h1>
+    <div class="button-container">
+      <button id="common">전체 일정</button>
+      <button id="major">행사 일정</button>
     </div>
-
-    <!-- Modal for 컴퓨터공학과 -->
-    <div class="modal fade" id="modal1" tabindex="-1" role="dialog" aria-labelledby="modal1Label" aria-hidden="true">
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="modal1Label">졸업이수기준 - 컴퓨터공학과</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div class="modal-body">
-            <img src="../../image/컴퓨터24.png" alt="컴퓨터공학과 이미지" class="img-fluid">
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Modal for 기계공학과 -->
-    <div class="modal fade" id="modal2" tabindex="-1" role="dialog" aria-labelledby="modal2Label" aria-hidden="true">
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="modal2Label">졸업이수기준 - 기계공학과</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div class="modal-body">
-            <img src="../../image/기계24.png" alt="기계공학과 이미지" class="img-fluid">
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Modal for 멀티미디어공학과 -->
-    <div class="modal fade" id="modal3" tabindex="-1" role="dialog" aria-labelledby="modal3Label" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="modal3Label">졸업이수기준 - 멀티미디어공학과</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            <div class="modal-body">
-              <img src="../../image/멀티미디어24.png" alt="멀티미디어공학과 이미지" class="img-fluid">
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Modal for 자동차공학과 -->
-    <div class="modal fade" id="modal4" tabindex="-1" role="dialog" aria-labelledby="modal4Label" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="modal3Label">졸업이수기준 - 자동차공학과</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            <div class="modal-body">
-              <img src="../../image/자동차24.png" alt="자동차공학과 이미지" class="img-fluid">
-            </div>
-          </div>
-        </div>
-      </div>
-
-       <!-- Modal for 전기공학과 -->
-    <div class="modal fade" id="modal5" tabindex="-1" role="dialog" aria-labelledby="modal5Label" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="modal3Label">졸업이수기준 - 전기공학과</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            <div class="modal-body">
-              <img src="../../image/전기공학24.png" alt="전기공학과 이미지" class="img-fluid">
-            </div>
-          </div>
-        </div>
-      </div>
-
-       <!-- Modal for 산업경영공학과 -->
-    <div class="modal fade" id="modal6" tabindex="-1" role="dialog" aria-labelledby="modal6Label" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="modal3Label">졸업이수기준 - 산업경영공학과</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            <div class="modal-body">
-              <img src="../../image/산업경영24.png" alt="산업경영공학과 이미지" class="img-fluid">
-            </div>
-          </div>
-        </div>
-      </div>
-
-       <!-- Modal for 정보통신공학과 -->
-    <div class="modal fade" id="modal7" tabindex="-1" role="dialog" aria-labelledby="modal7Label" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="modal3Label">졸업이수기준 - 정보통신공학과</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            <div class="modal-body">
-              <img src="../../image/정보통신24.png" alt="정보통신공학과 이미지" class="img-fluid">
-            </div>
-          </div>
-        </div>
-      </div>
-
-    <!-- Bootstrap JS (Optional) -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-</body>
+    <div id="calendar1" class="calendar-container"></div>
+    <div id="calendar2" class="calendar-container"></div>
+  </body>
 </html>
