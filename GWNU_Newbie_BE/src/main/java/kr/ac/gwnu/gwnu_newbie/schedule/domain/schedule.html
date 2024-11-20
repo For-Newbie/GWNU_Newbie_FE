@@ -106,52 +106,79 @@
         justify-content: center;
         min-height: 100vh;
         margin: 0;
-        background-color: #f7f7f7; 
-        font-family: 'Arial', sans-serif; 
+        background-color: #f7f7f7;
+        font-family: 'Roboto', sans-serif;
+        box-sizing: border-box;
       }
+
       h1 {
         text-align: center;
-        margin: 20px 0;
-        color: #333; 
-        font-weight: bold; 
+        color: #333;
+        font-weight: bold;
+        font-size: 3vw;
+        letter-spacing: 1px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
       }
+
+      h1 img {
+        width: 5vw;
+        margin-right: 20px;
+      }
+
       .calendar-container {
-        width: 80%;  
-        max-width: 1000px;  
-        margin: 20px auto; 
-        background-color: white; 
-        border-radius: 10px; 
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); 
-        padding: 20px; 
+        width: 65%;
+        max-height: 80%;
+        margin: 20px auto;
+        background-color: #ffffff;
+        border-radius: 15px; /* 더 둥글게 */
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15); /* 더 부드러운 그림자 */
+        padding: 40px;
+        transition: transform 0.3s; /* 부드러운 움직임 */
+        font-size: 1vw;
       }
+
+      .calendar-container:hover {
+        transform: translateY(-10px); /* 호버 시 살짝 위로 */
+      }
+
       .button-container {
         text-align: center;
-        margin-bottom: 20px; 
       }
+
       button {
-        margin: 0 20px;
-        padding: 10px 20px;
-        font-size: 16px;
+        margin: 2vh 5vw; 
+        padding: 2vh 2vw; 
+        font-size: 2vh; 
         cursor: pointer;
-        border: none; 
-        border-radius: 20px; 
-        background-color: #007bff; 
-        color: white; 
-        transition: background-color 0.3s; 
+        border: none;
+        border-radius: 50px;
+        background-color: #007bff;
+        color: white;
+        transition: all 0.3s; /* 모든 변화에 부드러운 애니메이션 */
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
       }
+
       button:hover {
-        background-color: #0056b3; 
+        background-color: #0056b3;
+        transform: translateY(-3px); /* 호버 시 살짝 위로 */
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); /* 더 강한 그림자 */
+      }
+
+      button:focus {
+        outline: none;
       }
     </style>
   </head>
   <body>
     <h1> 
-      <img src="../../image/GWNU-LOGO.png" alt="GWNU 로고" 
-      style="width: 70px; height: auto; vertical-align: middle; margin-right: 20px;">
-      학사일정 캘린더</h1>
+      <img src="../../image/GWNU-LOGO.png" alt="GWNU 로고">
+      학사일정 캘린더
+    </h1>
     <div class="button-container">
-      <button id="common">공통 일정</button>
-      <button id="major">학과 일정</button>
+      <button id="common">전체 일정</button>
+      <button id="major">행사 일정</button>
     </div>
     <div id="calendar1" class="calendar-container"></div>
     <div id="calendar2" class="calendar-container"></div>
